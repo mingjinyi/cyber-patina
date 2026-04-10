@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>赛博包浆引擎</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #121212; color: white; margin: 0; padding: 20px; text-align: center; }
+        h2 { color: #00ffcc; }
+        .upload-btn { background: #333; color: white; padding: 15px 30px; border-radius: 8px; border: 2px dashed #666; display: inline-block; margin: 20px 0; cursor: pointer; }
+        canvas { max-width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
+        
+        #status { margin-top: 15px; color: #aaa; font-size: 14px; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>⚡ 赛博包浆引擎</h2>
+    
+    <label class="upload-btn">
+        点击上传照片注入毒药
+        <input type="file" id="imageInput" accept="image/*">
+    </label>
+
+    <div id="status">等待上传图片... (模型加载中)</div>
+
+    <!-- <canvas id="outputCanvas"></canvas> -->
+    <canvas id="outputCanvas" style="display: none;"></canvas>
+    
+    <img id="resultImage" style="display: none; max-width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,204,0.2); -webkit-touch-callout: default;">
+
+    <script src="app.js"></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+              console.log('离线引擎激活成功！范围: ', registration.scope);
+            })
+            .catch(err => {
+              console.log('离线引擎激活失败: ', err);
+            });
+        });
+      }
+    </script>
+</body>
+</html>
