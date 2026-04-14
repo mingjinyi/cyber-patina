@@ -13,7 +13,11 @@ async function initModel() {
         statusDiv.innerText = '模型加载中... (约 40MB，首次加载请耐心等待)';
         // 设置执行后端为 WebAssembly (wasm)，手机浏览器支持最好
         ort.env.wasm.numThreads = 4; 
-        session = await ort.InferenceSession.create('./cyber_patina_lite0.onnx', { executionProviders: ['wasm'] });
+        // session = await ort.InferenceSession.create('./cyber_patina_lite0.onnx', { executionProviders: ['wasm'] });
+        // 使用国内高速镜像节点拉取模型
+        const modelUrl = 'https://ghproxy.net/https://raw.githubusercontent.com/mingjinyi/cyber-patina/main/cyber_patina_lite0.onnx';
+
+        session = await ort.InferenceSession.create(modelUrl, { executionProviders: ['wasm'] });
         statusDiv.innerText = '✅ 模型加载完毕！请上传照片。';
         statusDiv.style.color = '#00ffcc';
     } catch (e) {
