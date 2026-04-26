@@ -12,28 +12,47 @@
 
     <style>
         body { font-family: -apple-system, sans-serif; background: #121212; color: white; margin: 0; padding: 20px; text-align: center; }
-        h2 { color: #00ffcc; }
-        .upload-btn { background: #333; color: white; padding: 15px 30px; border-radius: 8px; border: 2px dashed #666; display: inline-block; margin: 20px 0; cursor: pointer; }
-        canvas { max-width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
+        h2 { color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.5); letter-spacing: 2px; }
         
-        #status { margin-top: 15px; color: #aaa; font-size: 14px; }
+        .btn { background: #333; color: white; padding: 12px 20px; border-radius: 8px; border: 2px solid #666; display: inline-block; margin: 10px 5px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .btn:hover { background: #00ffcc; color: #121212; border-color: #00ffcc; box-shadow: 0 0 15px rgba(0,255,204,0.4); }
+        .upload-btn { border: 2px dashed #00ffcc; color: #00ffcc; }
+        
+        canvas { max-width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,204,0.2); background: #000; }
+        #status { margin-top: 15px; color: #aaa; font-size: 14px; min-height: 20px;}
         input[type="file"] { display: none; }
+
+        .slider-container { margin-top: 20px; display: none; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333;}
+        #intensityRange { width: 80%; max-width: 300px; margin-top: 10px; accent-color: #00ffcc; }
+        
+        /* 隐藏的视频元素，只用于获取流 */
+        #videoElement { display: none; }
     </style>
 </head>
 <body>
 
-    <h2>⚡ 赛博包浆引擎</h2>
+    <h2>⚡ 赛博包浆引擎 v2</h2>
     
-    <label class="upload-btn">
-        点击上传照片注入毒药
-        <input type="file" id="imageInput" accept="image/*">
-    </label>
+    <div>
+        <label class="btn upload-btn">
+            🖼️ 上传静态相片
+            <input type="file" id="imageInput" accept="image/*">
+        </label>
+        <button class="btn" id="startVideoBtn">🎥 开启实时视觉</button>
+        <button class="btn" id="switchCameraBtn" style="display: none;">🔄 切换镜头</button>
+    </div>
 
-    <div id="status">等待上传图片... (模型加载中)</div>
+    <div id="status">系统待机中... (等待加载模型)</div>
 
-    <!-- <canvas id="outputCanvas"></canvas> -->
+    <div class="slider-container" id="sliderContainer">
+        <label>🎛️ ONNX 包浆浓度: <span id="intensityValue" style="color:#00ffcc; font-weight:bold;">50</span>%</label>
+        <br>
+        <input type="range" id="intensityRange" min="0" max="100" value="50">
+    </div>
+
+    <video id="videoElement" autoplay playsinline></video>
+    
     <canvas id="outputCanvas" style="display: none;"></canvas>
-    
     <img id="resultImage" style="display: none; max-width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,204,0.2); -webkit-touch-callout: default;">
 
     <script src="app.js"></script>
@@ -41,13 +60,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(registration => {
-              console.log('离线引擎激活成功！范围: ', registration.scope);
-            })
-            .catch(err => {
-              console.log('离线引擎激活失败: ', err);
-            });
+          navigator.serviceWorker.register('./sw.js').catch(()=> console.log('SW 离线注册跳过'));
         });
       }
     </script>
